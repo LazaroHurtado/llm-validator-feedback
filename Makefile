@@ -1,5 +1,7 @@
 
 SHELL := /bin/bash
+MODEL_FILE = "model.yml"
+CLEAR_LOG = false
 
 setup: create_venv
 	@echo "Activate the venv with: \`source ./llm_validator/bin/activate\`"
@@ -11,7 +13,13 @@ create_venv:
 
 .PHONY: clean
 clean:
-	rm -rf ./llm_validator
+	rm -rf ./llm_validator ;\
+	rm -f logger.out ;\
+	find . -type d -name "__pycache__" -exec rm -rf {} +
 
 from_yml:
-	python3 ./main.py --from_yml "model.yml"
+	@if [ "$(CLEAR_LOG)" = "true" ] || [ "$(CLEAR_LOG)" = "1" ]; then \
+        rm logger.out ;\
+        echo "logger.out deleted" ;\
+    fi
+	python3 ./main.py --from_yml $(MODEL_FILE)
