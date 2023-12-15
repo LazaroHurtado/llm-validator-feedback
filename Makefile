@@ -1,7 +1,9 @@
 
 SHELL := /bin/bash
+
 MODEL_FILE = "model.yml"
 CLEAR_LOG = false
+LOG_LEVEL = INFO
 
 setup: create_venv
 	@echo "Activate the venv with: \`source ./llm_validator/bin/activate\`"
@@ -22,4 +24,4 @@ from_yml:
         rm logger.out ;\
         echo "logger.out deleted" ;\
     fi
-	python3 ./main.py --from_yml $(MODEL_FILE)
+	LOG_LEVEL=$(LOG_LEVEL) python3 ./main.py --from_yml $(MODEL_FILE)

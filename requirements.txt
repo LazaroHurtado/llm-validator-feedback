@@ -1,5 +1,6 @@
 ctransformers
 sentencepiece
 jsonargparse
+datasets
 protobuf
 torch
