@@ -1,7 +1,10 @@
 dataset: "ccdv/govreport-summarization"
-prompt: "Where do charm quarks come from?"
 model:
   name: "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
   file: "mistral-7b-instruct-v0.1.Q4_K_M.gguf"
   type: "mistral"
-log_level: "DEBUG"
+  config:
+    context_length: 4096
+    max_new_tokens: 1024
+    batch_size: 512
+    threads: 6

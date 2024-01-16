@@ -1,28 +1,28 @@
 import yaml
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 from jsonargparse import CLI
 from typing import Optional
+
+@dataclass
+class ModelConfig:
+    context_length: Optional[int]
+    batch_size: Optional[int]
+    threads: Optional[int]
 
 @dataclass
 class ModelArgs:
     name: str
     file: Optional[str]
     type: Optional[str]
+    config: Optional[ModelConfig]
 
 @dataclass
 class Args:
     model: Optional[ModelArgs]
     dataset: Optional[str]
     prompt: Optional[str]
-    
     from_yml: Optional[str]
-    log_level: str = field(
-        default='INFO',
-        metadata={
-            'choices': ["FATAL", "ERROR", "WARN", "INFO", "DEBUG"]
-        }
-    )
 
 def get_args_from_yml(filename: str) -> dict:
     with open(filename, "r") as f:
