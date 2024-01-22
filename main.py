@@ -1,9 +1,9 @@
 import logging
 import random
-import textwrap
 
 from typing import Optional
 from datasets import load_dataset
+from model.extractor_lm import ExtractorLM
 from model.prior_lm import PriorLM
 from model.validator_lm import ValidatorLM
 from model.coordinator import Coordinator
@@ -24,16 +24,16 @@ class Main():
             rnd_index = random.randint(0, len(dataset) - 1)
             prompt = dataset[rnd_index]["report"]
 
-        Main.LOGGER.debug(f"Running with\n\tmodel: {model.__dict__}")
+        Main.LOGGER.debug(f"Running with model: {model.__dict__}")
         
+        extractor = ExtractorLM(model)
         prior = PriorLM(model)
         validator = ValidatorLM(model)
 
-        coordinator = Coordinator(prior, validator)
+        coordinator = Coordinator(extractor, prior, validator)
         return coordinator.call(prompt)
 
 if __name__ == "__main__":
     args = parse_args()
     
     output = Main.run(args.model, args.prompt, args.dataset, args)
-    print(args)

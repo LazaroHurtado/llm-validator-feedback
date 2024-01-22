@@ -1,21 +1,20 @@
 import yaml
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from jsonargparse import CLI
-from typing import Optional
-
-@dataclass
-class ModelConfig:
-    context_length: Optional[int]
-    batch_size: Optional[int]
-    threads: Optional[int]
+from typing import Optional, Dict
 
 @dataclass
 class ModelArgs:
     name: str
-    file: Optional[str]
-    type: Optional[str]
-    config: Optional[ModelConfig]
+    file: Optional[str] = None
+    context_length: int = 2048
+    prompt_prefix: str = ""
+    prompt_suffix: str = ""
+    is_gguf: bool = False
+    device: str = "cpu"
+    generation_config: Dict[str, any] = field(default_factory=dict)
+    model_config: Dict[str, any] = field(default_factory=dict)
 
 @dataclass
 class Args:
@@ -23,6 +22,10 @@ class Args:
     dataset: Optional[str]
     prompt: Optional[str]
     from_yml: Optional[str]
+
+    def __post_init__(self):
+        if self.model is not None:
+            self.model = ModelArgs(**self.model)
 
 def get_args_from_yml(filename: str) -> dict:
     with open(filename, "r") as f:
@@ -37,8 +40,5 @@ def parse_args():
 
     if (args.from_yml is not None):
         args = replace(args, **get_args_from_yml(args.from_yml))
-    
-    if (args.model is not None):
-        args.model = ModelArgs(**args.model)
-    
+
     return args
