@@ -1,13 +1,14 @@
-import logging
-import random
-
-from typing import Optional
-from datasets import load_dataset
+from commands import Args, ModelArgs, parse_args
+from model.coordinator import Coordinator
 from model.extractor_lm import ExtractorLM
 from model.prior_lm import PriorLM
 from model.validator_lm import ValidatorLM
-from model.coordinator import Coordinator
-from commands import Args, ModelArgs, parse_args
+
+from typing import Optional
+from datasets import load_dataset
+
+import logging
+import random
 
 class Main():
     LOGGER = logging.getLogger("MAIN")
