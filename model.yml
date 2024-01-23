@@ -1,10 +1,11 @@
 dataset: "ccdv/govreport-summarization"
 model:
-  name: "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
-  file: "mistral-7b-instruct-v0.1.Q4_K_M.gguf"
-  type: "mistral"
-  config:
-    context_length: 4096
+  name: "TheBloke/Mistral-7B-Instruct-v0.2-GGUF"
+  prompt_prefix: "[INST]"
+  prompt_suffix: "[/INST]"
+  context_length: 4096
+  is_gguf: True
+  generation_config:
     max_new_tokens: 1024
     batch_size: 512
     threads: 6

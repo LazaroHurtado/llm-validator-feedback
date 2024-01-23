@@ -3,17 +3,14 @@ from model.base_lm import BaseLM
 from helpers.model_logger import ModelLogger
 from helpers.causal_lm import format_meta_prompt
 
-class ValidatorLM(BaseLM):
-    LOGGER = ModelLogger("VALIDATOR")
+class ExtractorLM(BaseLM):
+    LOGGER = ModelLogger("EXTRACTOR")
     META_PROMPT: str = format_meta_prompt("""
-        You are a validator who judges a piece of text and validates if it
-        satisfies some constraints. It is extremely important
-        that you are correct, there will be huge consequences if not.
-        **DO NOT HALLUCINATE**. Let's think step by step to make sure we are correct.
-        If the text does not satisfy a constraint then output invalid. If the text
-        satisfies all the constraints then output valid.""")
-    CONSTRAINTS_PROMPT: str = format_meta_prompt("Constraints: {constraints}")
-    TEXT_PROMPT: str = format_meta_prompt("Text: {text}")
+        You will take in a user's request and extract all the necessary
+        constraints the user is asking for. Be precise and detailed. Only
+        output the constraints that are being asked for. Do not include
+        "the user" when outputting the constraints. For the following
+        text what are the constraints?""")
 
     def __init__(self, model_args: ModelArgs, eager_load: bool = False):
         super().__init__(model_args)
@@ -26,10 +23,7 @@ class ValidatorLM(BaseLM):
         return self.PROMPT
     
     def build_prompt(self, prompt: str) -> str:
-        constraints_prompt = self.CONSTRAINTS_PROMPT.format(constraints=self.constraints)
-        text_prompt = self.TEXT_PROMPT.format(text=prompt)
-
-        full_prompt = f"{self.META_PROMPT}\n\n{constraints_prompt}\n\n{text_prompt}"
+        full_prompt = f"{self.META_PROMPT}\n\n{prompt}"
         structured_prompt = self.structure_prompt(full_prompt)
         
         tokenized_prompt = self.llm.tokenize(structured_prompt)[:self.max_tokens]
@@ -50,6 +44,3 @@ class ValidatorLM(BaseLM):
         if self.model_args.is_gguf:
             return self.llm(prompt)
         return self.generate(prompt)
-    
-    def set_constraints(self, constraints: str):
-        self.constraints = constraints
