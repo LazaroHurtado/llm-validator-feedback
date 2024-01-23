@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
 from commands import ModelArgs
 from helpers.causal_lm import tokenize, detokenize, generate, prepare_model_config
+
+from abc import ABC, abstractmethod
 
 class BaseLM(ABC):
 

@@ -1,7 +1,7 @@
 from commands import ModelArgs
-from model.base_lm import BaseLM
-from helpers.model_logger import ModelLogger
 from helpers.causal_lm import format_meta_prompt
+from helpers.model_logger import ModelLogger
+from model.base_lm import BaseLM
 
 class PriorLM(BaseLM):
     LOGGER = ModelLogger("PRIOR")
@@ -18,11 +18,9 @@ class PriorLM(BaseLM):
         comments add little value to the insights. Only mention insights that
         really matters.""")
     FEW_SHOT_PROMPT: str = format_meta_prompt("""
-        Here are some examples of invalid summarizations that you should not generate:
-        {examples}""")
+        Here are some examples of invalid summarizations that you should not generate: {examples}""")
     TEXT_PROMPT: str = format_meta_prompt("""
-        Now summarize the following text with what you have learned:                   
-        {text}""")
+        Now summarize the following text with what you have learned: {text}""")
 
     def __init__(self, model_args: ModelArgs, eager_load: bool = False):
         super().__init__(model_args)
@@ -34,12 +32,12 @@ class PriorLM(BaseLM):
 
     @property
     def meta_prompt(self) -> str:
-        return self.PROMPT
+        return self.META_PROMPT
     
     def build_prompt(self, prompt: str) -> str:
         examples = "\n\n".join(self.examples)
-        few_shot_prompt = self.FEW_SHOT_PROMPT.format(examples=examples)
-        text_prompt = self.TEXT_PROMPT.format(text=prompt)
+        few_shot_prompt = self.FEW_SHOT_PROMPT.format(examples=f"\n{examples}")
+        text_prompt = self.TEXT_PROMPT.format(text=f"\n{prompt}")
 
         full_prompt = f"{self.META_PROMPT}\n\n{few_shot_prompt}\n\n{text_prompt}"
         structured_prompt = self.structure_prompt(full_prompt)

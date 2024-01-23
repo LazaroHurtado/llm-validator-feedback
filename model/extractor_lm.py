@@ -1,7 +1,7 @@
 from commands import ModelArgs
-from model.base_lm import BaseLM
-from helpers.model_logger import ModelLogger
 from helpers.causal_lm import format_meta_prompt
+from helpers.model_logger import ModelLogger
+from model.base_lm import BaseLM
 
 class ExtractorLM(BaseLM):
     LOGGER = ModelLogger("EXTRACTOR")
@@ -20,7 +20,7 @@ class ExtractorLM(BaseLM):
 
     @property
     def meta_prompt(self) -> str:
-        return self.PROMPT
+        return self.META_PROMPT
     
     def build_prompt(self, prompt: str) -> str:
         full_prompt = f"{self.META_PROMPT}\n\n{prompt}"
@@ -41,6 +41,8 @@ class ExtractorLM(BaseLM):
     
     @LOGGER.log_completion
     def prompt_completion(self, prompt: str) -> str:
+        generation_warming = "Constraints:\n1."
+        new_prompt = f"{prompt}\n\n{generation_warming}"
         if self.model_args.is_gguf:
-            return self.llm(prompt)
-        return self.generate(prompt)
+            return generation_warming+self.llm(new_prompt)
+        return generation_warming+self.generate(new_prompt)

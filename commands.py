@@ -1,8 +1,8 @@
-import yaml
-
 from dataclasses import dataclass, field, replace
 from jsonargparse import CLI
 from typing import Optional, Dict
+
+import yaml
 
 @dataclass
 class ModelArgs:

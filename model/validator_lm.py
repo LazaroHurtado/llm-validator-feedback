@@ -1,7 +1,7 @@
 from commands import ModelArgs
-from model.base_lm import BaseLM
-from helpers.model_logger import ModelLogger
 from helpers.causal_lm import format_meta_prompt
+from helpers.model_logger import ModelLogger
+from model.base_lm import BaseLM
 
 class ValidatorLM(BaseLM):
     LOGGER = ModelLogger("VALIDATOR")
@@ -23,11 +23,11 @@ class ValidatorLM(BaseLM):
 
     @property
     def meta_prompt(self) -> str:
-        return self.PROMPT
+        return self.META_PROMPT
     
     def build_prompt(self, prompt: str) -> str:
-        constraints_prompt = self.CONSTRAINTS_PROMPT.format(constraints=self.constraints)
-        text_prompt = self.TEXT_PROMPT.format(text=prompt)
+        constraints_prompt = self.CONSTRAINTS_PROMPT.format(constraints=f"\n{self.constraints}")
+        text_prompt = self.TEXT_PROMPT.format(text=f"\n{prompt}")
 
         full_prompt = f"{self.META_PROMPT}\n\n{constraints_prompt}\n\n{text_prompt}"
         structured_prompt = self.structure_prompt(full_prompt)

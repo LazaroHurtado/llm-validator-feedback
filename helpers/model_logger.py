@@ -1,6 +1,6 @@
+from logging import Logger, FileHandler, Formatter, getLevelName
 from os import environ
 from time import gmtime, monotonic, strftime
-from logging import Logger, FileHandler, Formatter, getLevelName
 
 class ModelLogger(Logger):
     DEFAULT_LOG_FILE_PATH = './logger.out'
