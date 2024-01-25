@@ -1,7 +1,7 @@
 from helpers.model_logger import ModelLogger
-from model.extractor_lm import ExtractorLM
-from model.prior_lm import PriorLM
-from model.validator_lm import ValidatorLM
+from lm.extractor_lm import ExtractorLM
+from lm.prior_lm import PriorLM
+from lm.validator_lm import ValidatorLM
 
 class Coordinator():
     LOGGER = ModelLogger("COORDINATOR")
