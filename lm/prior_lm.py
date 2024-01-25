@@ -1,7 +1,7 @@
-from commands import ModelArgs
-from helpers.causal_lm import format_meta_prompt
+from helpers.utils import format_meta_prompt
 from helpers.model_logger import ModelLogger
-from model.base_lm import BaseLM
+from lm.base_lm import BaseLM
+from model.model import Model
 
 class PriorLM(BaseLM):
     LOGGER = ModelLogger("PRIOR")
@@ -22,13 +22,10 @@ class PriorLM(BaseLM):
     TEXT_PROMPT: str = format_meta_prompt("""
         Now summarize the following text with what you have learned: {text}""")
 
-    def __init__(self, model_args: ModelArgs, eager_load: bool = False):
-        super().__init__(model_args)
+    def __init__(self, model: Model):
+        super().__init__(model)
 
         self.examples = []
-
-        if (eager_load):
-            self.load_model()
 
     @property
     def meta_prompt(self) -> str:
@@ -42,14 +39,12 @@ class PriorLM(BaseLM):
         full_prompt = f"{self.META_PROMPT}\n\n{few_shot_prompt}\n\n{text_prompt}"
         structured_prompt = self.structure_prompt(full_prompt)
         
-        tokenized_prompt = self.llm.tokenize(structured_prompt)[:self.max_tokens]
-        trimmed_prompt = self.llm.detokenize(tokenized_prompt)
+        tokenized_prompt = self.model.tokenize(structured_prompt)[:self.max_tokens]
+        trimmed_prompt = self.model.detokenize(tokenized_prompt)
 
         return trimmed_prompt
 
     def generate(self, prompt: str) -> str:
-        self.load_model()
-
         input = self.build_prompt(prompt)
         output = self.prompt_completion(input)
 
@@ -57,9 +52,7 @@ class PriorLM(BaseLM):
     
     @LOGGER.log_completion
     def prompt_completion(self, prompt: str) -> str:
-        if self.model_args.is_gguf:
-            return self.llm(prompt)
-        return self.generate(prompt)
+        return self.model.generate(prompt)
 
     def set_examples(self, examples: list[str]):
         self.examples = examples
